@@ -2,7 +2,7 @@ import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function ForgotPassword({ status }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -19,19 +19,15 @@ export default function ForgotPassword({ status }) {
         <GuestLayout>
             <Head title="Forgot Password" />
 
-            <div className="mb-4 text-sm text-gray-600">
-                Forgot your password? No problem. Just let us know your email
-                address and we will email you a password reset link that will
-                allow you to choose a new one.
-            </div>
+            <div className="mb-8"><h1 className="text-2xl font-semibold tracking-tight text-gray-900">Reset your password</h1><p className="mt-2 text-sm leading-6 text-gray-500">Enter your email address and we'll send you a link to choose a new password.</p></div>
 
             {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
+                <div className="mb-6 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-sm font-medium text-[#1E3A8A]">
                     {status}
                 </div>
             )}
 
-            <form onSubmit={submit}>
+            <form onSubmit={submit} className="space-y-5">
                 <TextInput
                     id="email"
                     type="email"
@@ -44,12 +40,9 @@ export default function ForgotPassword({ status }) {
 
                 <InputError message={errors.email} className="mt-2" />
 
-                <div className="mt-4 flex items-center justify-end">
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Email Password Reset Link
-                    </PrimaryButton>
-                </div>
+                <PrimaryButton className="w-full" disabled={processing}>Send reset link</PrimaryButton>
             </form>
+            <p className="mt-6 text-center text-sm text-gray-500"><Link href={route('login')} className="font-medium text-[#2563EB] hover:text-[#1E3A8A]">Back to sign in</Link></p>
         </GuestLayout>
     );
 }

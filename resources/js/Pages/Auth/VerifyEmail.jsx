@@ -15,23 +15,18 @@ export default function VerifyEmail({ status }) {
         <GuestLayout>
             <Head title="Email Verification" />
 
-            <div className="mb-4 text-sm text-gray-600">
-                Thanks for signing up! Before getting started, could you verify
-                your email address by clicking on the link we just emailed to
-                you? If you didn't receive the email, we will gladly send you
-                another.
-            </div>
+            <div className="mb-8"><h1 className="text-2xl font-semibold tracking-tight text-gray-900">Verify your email</h1><p className="mt-2 text-sm leading-6 text-gray-500">We've sent a verification link to your email address. Open it to activate your account.</p></div>
 
             {status === 'verification-link-sent' && (
-                <div className="mb-4 text-sm font-medium text-green-600">
+                <div className="mb-6 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-sm font-medium text-[#1E3A8A]">
                     A new verification link has been sent to the email address
                     you provided during registration.
                 </div>
             )}
 
             <form onSubmit={submit}>
-                <div className="mt-4 flex items-center justify-between">
-                    <PrimaryButton disabled={processing}>
+                <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <PrimaryButton className="w-full sm:w-auto" disabled={processing}>
                         Resend Verification Email
                     </PrimaryButton>
 
@@ -39,7 +34,7 @@ export default function VerifyEmail({ status }) {
                         href={route('logout')}
                         method="post"
                         as="button"
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="text-center text-sm font-medium text-[#2563EB] transition hover:text-[#1E3A8A] focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2"
                     >
                         Log Out
                     </Link>
