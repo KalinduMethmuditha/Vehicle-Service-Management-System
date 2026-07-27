@@ -1,26 +1,20 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AppLayout from '@/Layouts/AppLayout';
 import { Head } from '@inertiajs/react';
 
 export default function Dashboard() {
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Dashboard
-                </h2>
-            }
-        >
+        <AppLayout title="Dashboard">
             <Head title="Dashboard" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            You're logged in!
-                        </div>
-                    </div>
-                </div>
+            <div className="rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
+                <h2 className="text-xl font-semibold text-slate-900">
+                    Dashboard
+                </h2>
+
+                <p className="mt-2 text-sm text-slate-500">
+                    The dashboard is ready to receive real system data.
+                </p>
             </div>
-        </AuthenticatedLayout>
+        </AppLayout>
     );
 }

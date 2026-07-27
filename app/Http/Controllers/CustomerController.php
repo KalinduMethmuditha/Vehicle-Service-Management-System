@@ -2,63 +2,80 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCustomerRequest;
+use App\Http\Requests\UpdateCustomerRequest;
+use App\Models\Customer;
+use App\Services\CustomerService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CustomerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+    public function __construct(
+        private readonly CustomerService $customerService
+    ) {
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(Request $request): Response
     {
-        //
+        Gate::authorize('customers.view');
+
+        $customers = Customer::query()
+            ->when($request->search, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return Inertia::render('Customers/Index', [
+            'customers' => $customers,
+            'filters' => $request->only('search'),
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreCustomerRequest $request): RedirectResponse
     {
-        //
+        $this->customerService->create($request->validated());
+
+        return to_route('customers.index')
+            ->with('success', 'Customer created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+    public function update(
+        UpdateCustomerRequest $request,
+        Customer $customer
+    ): RedirectResponse {
+        $this->customerService->update(
+            $customer,
+            $request->validated()
+        );
+
+        return to_route('customers.index')
+            ->with('success', 'Customer updated successfully.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy(Customer $customer): RedirectResponse
     {
-        //
-    }
+        Gate::authorize('customers.delete');
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        if ($customer->vehicles()->exists()) {
+            return back()->with(
+                'error',
+                'Cannot delete a customer who has registered vehicles.'
+            );
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $this->customerService->delete($customer);
+
+        return to_route('customers.index')
+            ->with('success', 'Customer deleted successfully.');
     }
 }
