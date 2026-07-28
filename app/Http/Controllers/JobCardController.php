@@ -17,11 +17,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Services\AIServiceSummaryService;
 
 class JobCardController extends Controller
 {
     public function __construct(
-        private readonly JobCardService $jobCardService
+        private readonly JobCardService $jobCardService,
+        private readonly AIServiceSummaryService $aiServiceSummaryService
+        
     ) {
     }
 
@@ -151,4 +154,21 @@ class JobCardController extends Controller
         return to_route('job-cards.index')
             ->with('success', 'Job card deleted successfully.');
     }
+
+    public function generateAiSummary(
+          JobCard $jobCard
+    ): RedirectResponse {
+          Gate::authorize('update', $jobCard);
+
+          $this->aiServiceSummaryService->generate(
+            $jobCard
+          );
+
+          return to_route('job-cards.index')
+            ->with(
+              'success',
+              'AI service summary generated successfully.'
+            );
+}
+    
 }

@@ -19,6 +19,11 @@ export default function AppLayout({ title, children }) {
             active: 'dashboard',
         },
         {
+            label: 'Users & Roles',
+            route: 'admin.users.index',
+            active: 'admin.users.*',
+        },
+        {
             label: 'Customers',
             route: 'customers.index',
             active: 'customers.*',
@@ -111,8 +116,7 @@ export default function AppLayout({ title, children }) {
         navigation = mechanicNavigation;
     }
 
-    const currentRole =
-        roles[0] ?? 'User';
+    const currentRole = roles[0] ?? 'User';
 
     const SidebarContent = () => (
         <>
@@ -138,24 +142,30 @@ export default function AppLayout({ title, children }) {
             </div>
 
             <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
-                {navigation.map((item) => {
-                    const active = route().current(item.active);
+                {navigation
+                    .filter((item) => route().has(item.route))
+                    .map((item) => {
+                        const active = route().current(
+                            item.active
+                        );
 
-                    return (
-                        <Link
-                            key={item.route}
-                            href={route(item.route)}
-                            onClick={() => setSidebarOpen(false)}
-                            className={`block rounded-lg px-4 py-2.5 text-sm font-medium transition ${
-                                active
-                                    ? 'bg-blue-600 text-white'
-                                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                            }`}
-                        >
-                            {item.label}
-                        </Link>
-                    );
-                })}
+                        return (
+                            <Link
+                                key={item.route}
+                                href={route(item.route)}
+                                onClick={() =>
+                                    setSidebarOpen(false)
+                                }
+                                className={`block rounded-lg px-4 py-2.5 text-sm font-medium transition ${
+                                    active
+                                        ? 'bg-blue-600 text-white'
+                                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                                }`}
+                            >
+                                {item.label}
+                            </Link>
+                        );
+                    })}
             </nav>
 
             <div className="border-t border-slate-700 p-4">
@@ -173,6 +183,15 @@ export default function AppLayout({ title, children }) {
                     </span>
                 </div>
 
+                {route().has('profile.edit') && (
+                    <Link
+                        href={route('profile.edit')}
+                        className="mb-2 block w-full rounded-lg border border-slate-600 px-4 py-2 text-center text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white"
+                    >
+                        Profile
+                    </Link>
+                )}
+
                 <Link
                     href={route('logout')}
                     method="post"
@@ -186,18 +205,18 @@ export default function AppLayout({ title, children }) {
     );
 
     return (
-        <div className="min-h-screen bg-slate-100">
+        <div className="min-h-screen bg-slate-100 print:bg-white">
             {sidebarOpen && (
                 <button
                     type="button"
                     aria-label="Close sidebar"
                     onClick={() => setSidebarOpen(false)}
-                    className="fixed inset-0 z-40 bg-slate-950/50 lg:hidden"
+                    className="fixed inset-0 z-40 bg-slate-950/50 lg:hidden print:hidden"
                 />
             )}
 
             <aside
-                className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-slate-900 transition-transform duration-200 lg:translate-x-0 ${
+                className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-slate-900 transition-transform duration-200 print:hidden lg:translate-x-0 ${
                     sidebarOpen
                         ? 'translate-x-0'
                         : '-translate-x-full'
@@ -206,13 +225,15 @@ export default function AppLayout({ title, children }) {
                 <SidebarContent />
             </aside>
 
-            <div className="lg:pl-64">
-                <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
+            <div className="lg:pl-64 print:pl-0">
+                <header className="sticky top-0 z-30 border-b border-slate-200 bg-white print:hidden">
                     <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
                         <div className="flex items-center gap-3">
                             <button
                                 type="button"
-                                onClick={() => setSidebarOpen(true)}
+                                onClick={() =>
+                                    setSidebarOpen(true)
+                                }
                                 className="rounded-lg border border-slate-300 p-2 text-slate-600 lg:hidden"
                                 aria-label="Open sidebar"
                             >
@@ -227,7 +248,8 @@ export default function AppLayout({ title, children }) {
                                 </h1>
 
                                 <p className="hidden text-xs text-slate-500 sm:block">
-                                    Vehicle Service Management System
+                                    Vehicle Service Management
+                                    System
                                 </p>
                             </div>
                         </div>
@@ -244,15 +266,15 @@ export default function AppLayout({ title, children }) {
                     </div>
                 </header>
 
-                <main className="p-4 sm:p-6 lg:p-8">
+                <main className="p-4 sm:p-6 lg:p-8 print:p-0">
                     {flash?.success && (
-                        <div className="mb-5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                        <div className="mb-5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 print:hidden">
                             {flash.success}
                         </div>
                     )}
 
                     {flash?.error && (
-                        <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                        <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 print:hidden">
                             {flash.error}
                         </div>
                     )}

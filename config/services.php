@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'openai' => [
+       'key' => env('OPENAI_API_KEY'),
+       'model' => env('OPENAI_MODEL', 'gpt-5-mini'),
+       'url' => env(
+         'OPENAI_API_URL',
+         'https://api.openai.com/v1'
+       ),
+    ],
+
 ];

@@ -24,6 +24,8 @@ class JobCard extends Model
         'completed_at',
         'stock_deducted_at',
         'completion_summary',
+        'ai_summary',
+        'ai_summary_generated_at',
     ];
 
     protected function casts(): array
@@ -34,6 +36,7 @@ class JobCard extends Model
             'started_at' => 'datetime',
             'completed_at' => 'datetime',
             'stock_deducted_at' => 'datetime',
+            'ai_summary_generated_at' => 'datetime',
         ];
     }
 

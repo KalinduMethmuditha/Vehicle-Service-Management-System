@@ -7,6 +7,10 @@ const statusClasses = {
     cancelled: 'bg-red-100 text-red-700',
     paid: 'bg-emerald-100 text-emerald-700',
     low: 'bg-red-100 text-red-700',
+    active: 'bg-emerald-100 text-emerald-700',
+    inactive: 'bg-slate-100 text-slate-600',
+    in_stock: 'bg-emerald-100 text-emerald-700',
+    out_of_stock: 'bg-red-100 text-red-700',
 };
 
 export default function StatusBadge({ status }) {

@@ -5,9 +5,10 @@ namespace App\Models;
 use App\Enums\BookingStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ServiceBooking extends Model
 {
@@ -44,10 +45,9 @@ class ServiceBooking extends Model
         return $this->belongsTo(User::class, 'advisor_id');
     }
 
-    public function jobCard(): BelongsToMany
+    public function jobCard(): HasOne
     {
-        return $this->belongsToMany(JobCard::class)
-           ->withTimestamps();
+         return $this->hasOne(JobCard::class);
     }
     
 
