@@ -32,11 +32,8 @@ class User extends Authenticatable
         ];
     }
 
-    use Hasroles;
-
     public function mechanic(): HasOne
-{
-    return $this->hasOne(Mechanic::class);
+    {
+        return $this->hasOne(Mechanic::class);
+    }
 }
-}
-

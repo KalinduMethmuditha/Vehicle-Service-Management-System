@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
+use DomainException;
+
+
 
 class VehicleController extends Controller
 {
@@ -100,13 +103,19 @@ class VehicleController extends Controller
             ->with('success', 'Vehicle updated successfully.');
     }
 
-    public function destroy(Vehicle $vehicle): RedirectResponse
-    {
-        Gate::authorize('delete', $vehicle);
+    public function destroy(
+      Vehicle $vehicle
+    ): RedirectResponse {
+      Gate::authorize('delete', $vehicle);
 
+      try {
         $this->vehicleService->delete($vehicle);
-
+      } catch (DomainException $exception) {
         return to_route('vehicles.index')
-            ->with('success', 'Vehicle deleted successfully.');
+            ->with('error', $exception->getMessage());
+      }
+
+       return to_route('vehicles.index')
+        ->with('success', 'Vehicle deleted successfully.');
     }
 }

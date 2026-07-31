@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
+use DomainException;
 
 class ServiceBookingController extends Controller
 {
@@ -145,13 +146,18 @@ class ServiceBookingController extends Controller
     }
 
     public function destroy(
-        ServiceBooking $booking
+      ServiceBooking $booking
     ): RedirectResponse {
-        Gate::authorize('delete', $booking);
+      Gate::authorize('delete', $booking);
 
+      try {
         $this->bookingService->delete($booking);
-
+      } catch (DomainException $exception) {
         return to_route('bookings.index')
-            ->with('success', 'Booking deleted successfully.');
+            ->with('error', $exception->getMessage());
+      }
+
+      return to_route('bookings.index')
+        ->with('success', 'Booking deleted successfully.');
     }
 }

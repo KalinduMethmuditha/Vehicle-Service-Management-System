@@ -94,12 +94,26 @@ class DashboardController extends Controller
 
     private function mechanicDashboard(User $user): Response
     {
+        $mechanic = $user->mechanic;
+
+        if (! $mechanic) {
+            return Inertia::render('Dashboard/MechanicDashboard', [
+                'stats' => [
+                    'todayJobs' => 0,
+                    'pendingJobs' => 0,
+                    'inProgressJobs' => 0,
+                    'completedToday' => 0,
+                ],
+                'assignedJobs' => [],
+            ]);
+        }
+
         $assignedJobs = JobCard::query()
             ->whereHas(
                 'mechanics',
                 fn ($query) => $query->where(
-                    'mechanics.user_id',
-                    $user->id
+                    'mechanics.id',
+                    $mechanic->id
                 )
             );
 
@@ -154,4 +168,5 @@ class DashboardController extends Controller
             'assignedJobs' => $activeAssignedJobs,
         ]);
     }
+
 }

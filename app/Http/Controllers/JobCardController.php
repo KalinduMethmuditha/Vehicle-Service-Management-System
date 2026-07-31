@@ -38,8 +38,8 @@ class JobCardController extends Controller
                 fn ($query) => $query->whereHas(
                     'mechanics',
                     fn ($query) => $query->where(
-                        'user_id',
-                        $request->user()->id
+                        'mechanics.id',
+                        $request->user()->mechanic?->id
                     )
                 )
             );

@@ -18,36 +18,54 @@ class JobCardPolicy
             return $user->can('jobs.view');
         }
 
-        return $user->can('jobs.view') &&
-            $jobCard->mechanics()
-                ->where('user_id', $user->id)
-                ->exists();
+        return $user->hasRole('Mechanic')
+            && $user->can('jobs.view')
+            && $this->isAssignedMechanic($user, $jobCard);
     }
 
     public function create(User $user): bool
     {
-        return $user->can('jobs.assign');
+        return $user->hasAnyRole(['Admin', 'Service Advisor'])
+            && $user->can('jobs.assign');
     }
 
     public function update(User $user, JobCard $jobCard): bool
     {
-        return $user->can('jobs.assign');
+        if ($user->hasAnyRole(['Admin', 'Service Advisor'])) {
+            return $user->can('jobs.assign')
+                || $user->can('jobs.update');
+        }
+
+        return $user->hasRole('Mechanic')
+            && $user->can('jobs.update')
+            && $this->isAssignedMechanic($user, $jobCard);
     }
 
-    public function updateStatus(User $user, JobCard $jobCard): bool
-    {
+    public function updateStatus(
+        User $user,
+        JobCard $jobCard
+    ): bool {
         if ($user->hasAnyRole(['Admin', 'Service Advisor'])) {
             return $user->can('jobs.update');
         }
 
-        return $user->can('jobs.update') &&
-            $jobCard->mechanics()
-                ->where('user_id', $user->id)
-                ->exists();
+        return $user->hasRole('Mechanic')
+            && $user->can('jobs.update')
+            && $this->isAssignedMechanic($user, $jobCard);
     }
 
     public function delete(User $user, JobCard $jobCard): bool
     {
-        return $user->can('jobs.assign');
+        return $user->hasRole('Admin')
+            && $user->can('jobs.assign');
+    }
+
+    private function isAssignedMechanic(
+        User $user,
+        JobCard $jobCard
+    ): bool {
+        return $jobCard->mechanics()
+            ->where('user_id', $user->id)
+            ->exists();
     }
 }

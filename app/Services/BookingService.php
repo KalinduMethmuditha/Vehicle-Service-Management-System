@@ -7,6 +7,7 @@ use App\Models\ServiceBooking;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use DomainException;
 
 class BookingService
 {
@@ -93,17 +94,17 @@ class BookingService
         });
     }
 
-    public function delete(ServiceBooking $booking): void
-    {
-        if ($booking->status === BookingStatus::Completed) {
-            throw ValidationException::withMessages([
-                'booking' => 'Completed bookings cannot be deleted.',
-            ]);
-        }
+    public function delete(
+       ServiceBooking $booking
+    ): void {
+       if ($booking->jobCard()->exists()) {
+         throw new DomainException(
+            'This booking cannot be permanently deleted because it has a job card.'
+        );
+     }
 
-        $booking->delete();
+      $booking->forceDelete();
     }
-
     private function hasConflict(
         int $vehicleId,
         string $startsAt,
